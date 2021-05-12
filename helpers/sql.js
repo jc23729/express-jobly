@@ -18,10 +18,13 @@ function sqlForPartialUpdate(table, items, key, id) {
   let idx = -1;
   let columns = [];
 
-  
+  // filter out keys that start with "_" (=> "_token") -- we don't want these in DB
+  for (let key in items) {
+    if (key.startsWith("_")) {
+      delete items[key];
+    }
+  }
 }
-
-
 
 //Origonal code
 // const { BadRequestError } = require("../expressError");
