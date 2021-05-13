@@ -1,77 +1,118 @@
-/**
- * companies routes define the accessible routes to access company
- * resources.
- */
+"use strict";
+
+/** Routes for companies. */
+
+const jsonschema = require("jsonschema");
 const express = require("express");
-const Company = require("../models/companies");
-const validateJSON = require("../middleware/validateJSON");
-const {
-  ensureAuthenticated,
-  ensureCurrentUser,
-} = require("../middleware/authentication");
+
+const { BadRequestError } = require("../expressError");
+const { ensureLoggedIn } = require("../middleware/auth");
+const Company = require("../models/company");
+
+const companyNewSchema = require("../schemas/companyNew.json");
+const companyUpdateSchema = require("../schemas/companyUpdate.json");
 
 const router = new express.Router();
 
-//gets all companies with optional query parameters. Requires that the user
-//is authenticated
-router.get("/", ensureAuthenticated(), async function (req, res, next) {
+/** POST / { company } =>  { company }
+ *
+ * company should be { handle, name, description, numEmployees, logoUrl }
+ *
+ * Returns { handle, name, description, numEmployees, logoUrl }
+ *
+ * Authorization required: login
+ */
+
+router.post("/", ensureLoggedIn, async function (req, res, next) {
   try {
-    const companies = await Company.findAll(req.query);
+    const validator = jsonschema.validate(req.body, companyNewSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs);
+    }
+
+    const company = await Company.create(req.body);
+    return res.status(201).json({ company });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/** GET /  =>
+ *   { companies: [ { handle, name, description, numEmployees, logoUrl }, ...] }
+ *
+ * Can filter on provided search filters:
+ * - minEmployees
+ * - maxEmployees
+ * - nameLike (will find case-insensitive, partial matches)
+ *
+ * Authorization required: none
+ */
+
+router.get("/", async function (req, res, next) {
+  try {
+    const companies = await Company.findAll();
     return res.json({ companies });
-  } catch (e) {
-    return next(e);
+  } catch (err) {
+    return next(err);
   }
 });
-//Gets a given company with specified handle
-router.get("/:handle", ensureAuthenticated(), async function (req, res, next) {
+
+/** GET /[handle]  =>  { company }
+ *
+ *  Company is { handle, name, description, numEmployees, logoUrl, jobs }
+ *   where jobs is [{ id, title, salary, equity }, ...]
+ *
+ * Authorization required: none
+ */
+
+router.get("/:handle", async function (req, res, next) {
   try {
-    const company = await Company.findOne(req.params.handle);
+    const company = await Company.get(req.params.handle);
     return res.json({ company });
-  } catch (e) {
-    return next(e);
+  } catch (err) {
+    return next(err);
   }
 });
-//accepts a post request to create a new company. Requires that an
-//admin is authenticated, and that the json in the request is a valid
-//company
-router.post(
-  "/",
-  [ensureAuthenticated(true), validateJSON("company_new")],
-  async function (req, res, next) {
-    try {
-      let company = await Company.create(req.body);
-      return res.status(201).json({ company });
-    } catch (e) {
-      return next(e);
+
+/** PATCH /[handle] { fld1, fld2, ... } => { company }
+ *
+ * Patches company data.
+ *
+ * fields can be: { name, description, numEmployees, logo_url }
+ *
+ * Returns { handle, name, description, numEmployees, logo_url }
+ *
+ * Authorization required: login
+ */
+
+router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
+  try {
+    const validator = jsonschema.validate(req.body, companyUpdateSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs);
     }
+
+    const company = await Company.update(req.params.handle, req.body);
+    return res.json({ company });
+  } catch (err) {
+    return next(err);
   }
-);
-//accepts a patch request to update a company. Requires that an
-//admin is authenticated, and that the json in the request contains
-// valid company fields to update
-router.patch(
-  "/:handle",
-  [ensureAuthenticated(true), validateJSON("company_update")],
-  async function (req, res, next) {
-    try {
-      let company = await Company.update(req.body, req.params.handle);
-      return res.json({ company });
-    } catch (e) {
-      return next(e);
-    }
+});
+
+/** DELETE /[handle]  =>  { deleted: handle }
+ *
+ * Authorization: login
+ */
+
+router.delete("/:handle", ensureLoggedIn, async function (req, res, next) {
+  try {
+    await Company.remove(req.params.handle);
+    return res.json({ deleted: req.params.handle });
+  } catch (err) {
+    return next(err);
   }
-);
-//accepts a delete request to delete a company. requires that an
-//admin is authenticated.
-router.delete(
-  "/:handle",
-  ensureAuthenticated(true),
-  async function (req, res, next) {
-    try {
-      return await Company.remove(req.params.handle);
-    } catch (e) {
-      return next(e);
-    }
-  }
-);
+});
+
 module.exports = router;
