@@ -49,9 +49,33 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
  * Authorization required: none
  */
 
+
+
 router.get("/", async function (req, res, next) {
+  var name = '';
+  var minEmp = 0;
+  var maxEmp = 999999999;
+
+  if (req.query.minEmployees > req.query.maxEmployees) {
+    return res.send(401, 'minEmployees must be less than maxEmployees');
+  }
+  if (req.query.name) {
+    var name = req.query.name;
+    console.log(name);
+  }
+  if (req.query.minEmployees) {
+    minEmp = parseInt(req.query.minEmployees);
+
+    console.log(minEmp);
+  }
+  if (req.query.maxEmployees) {
+    maxEmp = parseInt(req.query.maxEmployees)
+  }
+
   try {
-    const companies = await Company.findAll();
+    const companies = await Company.findAll(
+name, minEmp, maxEmp
+    );
     return res.json({ companies });
   } catch (err) {
     return next(err);
