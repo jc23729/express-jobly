@@ -28,19 +28,19 @@ function authenticateJWT(req, res, next) {
   }
 }
 
-// function isAdmin(req, res, next) {
-//   try {
-//     const token = req.body._token || req.query._token;
-//     const payload = jwt.verify(token, SECRET_KEY);
+function isAdmin(req, res, next) {
+  try {
+    const token = req.body._token || req.query._token;
+    const payload = jwt.verify(token, SECRET_KEY);
 
-//     req.username = payload;
+    req.username = payload;
 
-//     if (req.username.is_admin) return next();
-//     throw new ExpressError("Unauthorized, admin privileges required", 401);
-//   } catch (err) {
-//     return next(err);
-//   }
-// }
+    if (req.username.is_admin) return next();
+    throw new ExpressError("Unauthorized, admin privileges required", 401);
+  } catch (err) {
+    return next(err);
+  }
+}
 
 
 
