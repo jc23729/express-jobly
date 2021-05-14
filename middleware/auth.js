@@ -27,7 +27,10 @@ function authenticateJWT(req, res, next) {
     return next();
   }
 }
-
+/** Middleware to use when they be logged in as an admin user.
+ *
+ *  If not, raises Unauthorized.
+ */
 function isAdmin(req, res, next) {
   try {
     const token = req.body._token || req.query._token;
