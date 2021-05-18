@@ -31,7 +31,7 @@ function authenticateJWT(req, res, next) {
  *  If not, raises Unauthorized.
  */
 
-function esureAdmin(req, res, next) {
+function ensureAdmin(req, res, next) {
   if (req.user.is_admin) {
     return next();
   } else {
