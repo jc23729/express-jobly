@@ -82,6 +82,18 @@ name, minEmp, maxEmp
   }
 });
 
+
+
+// Part Three: Change Authorization
+// Many routes for this site do not have appropriate authorization checks.
+
+// Companies
+// Retrieving the list of companies or information about a company should remain open to everyone, including anonymous users.
+// Creating, updating, and deleting companies should only be possible for users who logged in with an account that has the is_admin flag in the database.
+// Find a way to do this where you don’t need to change the code of these routes, and where you don’t need to SELECT information about the user on every request, but that the authentication credentials provided by the user can contain information suitable for this requirement.
+
+// Update tests to demonstrate that these security changes are working.
+
 /** GET /[handle]  =>  { company }
  *
  *  Company is { handle, name, description, numEmployees, logoUrl, jobs }
