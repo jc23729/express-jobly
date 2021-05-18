@@ -6,7 +6,6 @@ const jwt = require("jsonwebtoken");
 const { SECRET_KEY } = require("../config");
 const { UnauthorizedError } = require("../expressError");
 
-
 /** Middleware: Authenticate user.
  *
  * If a token was provided, verify it, and, if valid, store the token payload
@@ -41,7 +40,6 @@ function esureAdmin(req, res, next) {
   }
 }
 
-
 // function isAdmin(req, res, next) {
 //   try {
 //     const token = req.body._token || req.query._token;
@@ -55,8 +53,6 @@ function esureAdmin(req, res, next) {
 //     return next(err);
 //   }
 // }
-
-
 
 /** Middleware to use when they must be logged in.
  *
@@ -72,8 +68,8 @@ function ensureLoggedIn(req, res, next) {
   }
 }
 
-
 module.exports = {
   authenticateJWT,
   ensureLoggedIn,
+  ensureAdmin,
 };
