@@ -67,7 +67,7 @@ function ensureLoggedIn(req, res, next) {
     return next(err);
   }
 }
-
+//export all middleware functions
 module.exports = {
   authenticateJWT,
   ensureLoggedIn,
