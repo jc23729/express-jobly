@@ -32,6 +32,7 @@ function authenticateJWT(req, res, next) {
  */
 
 function ensureAdmin(req, res, next) {
+  console.log("dsfsdfsdfsdfsdvsfvsdfsdfdsfdsfdsfsdfsdfsdfsfd");
   if (req.user.is_admin) {
     return next();
   } else {
