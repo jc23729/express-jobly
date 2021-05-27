@@ -18,7 +18,7 @@ const { BadRequestError } = require("../expressError");
  *
  * Authorization required: none
  */
-//LOGIN    USED TO LOG SOMEONE IN 
+//LOGIN    USED TO LOG SOMEONE IN WHICH CAN BE USED TO AUTHENTICATE FURTHER REQUEST
 router.post("/token", async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, userAuthSchema);
