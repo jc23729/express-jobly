@@ -41,6 +41,7 @@ function ensureAdmin(req, res, next) {
   console.log("dsfsdfsdfsdfsdvsfvsdfsdfdsfdsfdsfsdfsdfsdfsfd");
   console.log("What is res.locals.user?", res.locals.users);
   try {
+    //if there is nothing in user (no user logged in), OR there is a user but it's not an admin, then throw this error that says Unauthorized
     if (!res.locals.user || !res.locals.user.isAdmin) {
       throw new UnauthorizedError();
     }
