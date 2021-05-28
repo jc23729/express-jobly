@@ -45,7 +45,6 @@ class Company {
    * */
 
   static async findAll(name, minEmp, maxEmp) {
-    
     const companiesRes = await db.query(
       `SELECT handle,
                   name,
@@ -55,7 +54,7 @@ class Company {
            FROM companies
           where LOWER(name) LIKE LOWER($1) and num_employees >= $2 and num_employees <= $3
            ORDER BY name`,
-      [`%${name}%`,minEmp, maxEmp]
+      [`%${name}%`, minEmp, maxEmp]
     );
     return companiesRes.rows;
   }
