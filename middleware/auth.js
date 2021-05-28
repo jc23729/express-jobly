@@ -41,6 +41,7 @@ function ensureAdmin(req, res, next) {
   console.log("dsfsdfsdfsdfsdvsfvsdfsdfdsfdsfdsfsdfsdfsdfsfd");
   console.log("What is res.locals.user?", res.locals.users);
   try {
+    //  res.locals.user = jwt.verify(token, SECRET_KEY);
     //if there is nothing in user (no user logged in), OR there is a user but it's not an admin, then throw this error that says Unauthorized
     if (!res.locals.user || !res.locals.user.isAdmin) {
       throw new UnauthorizedError();
@@ -50,6 +51,22 @@ function ensureAdmin(req, res, next) {
     return next(err);
   }
 }
+
+// In the middleware/auth.js
+// If there's a token, this will run and pull out the user details and set the to res.locals
+
+// function authenticateJWT(req, res, next) {
+//   try {
+//     const authHeader = req.headers && req.headers.authorization;
+//     if (authHeader) {
+//       const token = authHeader.replace(/^[Bb]earer /, "").trim();
+//       res.locals.user = jwt.verify(token, SECRET_KEY);
+//     }
+//     return next();
+//   } catch (err) {
+//     return next();
+//   }
+// }
 
 //origonal code didnt work 
 // function ensureAdmin(req, res, next) {
