@@ -31,15 +31,23 @@ function authenticateJWT(req, res, next) {
  *  If not, raises Unauthorized.
  */
 
-function ensureAdmin(req, res, next) {
-  console.log("dsfsdfsdfsdfsdvsfvsdfsdfdsfdsfdsfsdfsdfsdfsfd");
-  if (req.user.is_admin) {
-    return next();
-  } else {
-    const adminErr = new ExpressError("Only admin users allow access", 401);
-    return next(adminErr);
-  }
-}
+// Ok, the big problem was that the middleware auth route was a bit off. I had to refactor it a lot.
+// Some main issues: req doesn't have any information here because nothing was passed in via form or url.
+// Everything is in JSON body, even the user admin info.So when you were trying to get user info from req.user, nothing was there.
+// You actually new res.locals.user.You also had an ExpressError, but you hadn't defined ExpressError at the top of the app.Also,
+// it's good to make these routes try catch.So here's what I got to work:
+
+
+//origonal code didnt work 
+// function ensureAdmin(req, res, next) {
+//   console.log("dsfsdfsdfsdfsdvsfvsdfsdfdsfdsfdsfsdfsdfsdfsfd");
+//   if (req.user.is_admin) {
+//     return next();
+//   } else {
+//     const adminErr = new ExpressError("Only admin users allow access", 401);
+//     return next(adminErr);
+//   }
+// }
 
 // function isAdmin(req, res, next) {
 //   try {
