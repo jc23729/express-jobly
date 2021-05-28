@@ -37,6 +37,18 @@ function authenticateJWT(req, res, next) {
 // You actually new res.locals.user.You also had an ExpressError, but you hadn't defined ExpressError at the top of the app.Also,
 // it's good to make these routes try catch.So here's what I got to work:
 
+function ensureAdmin(req, res, next) {
+  console.log("dsfsdfsdfsdfsdvsfvsdfsdfdsfdsfdsfsdfsdfsdfsfd");
+  console.log("What is res.locals.user?", res.locals.users);
+  try {
+    if (!res.locals.user || !res.locals.user.isAdmin) {
+      throw new UnauthorizedError();
+    }
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+}
 
 //origonal code didnt work 
 // function ensureAdmin(req, res, next) {
